@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rebalancing Calculator - Portofolio Investasi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .panel h2 {
+            color: #2a5298;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eaeaea;
+            font-size: 1.5rem;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input, select, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 2px rgba(42, 82, 152, 0.2);
+        }
+        
+        button {
+            background-color: #2a5298;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #1e3c72;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .button-group button {
+            margin-bottom: 0;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+        
+        .btn-info {
+            background-color: #17a2b8;
+        }
+        
+        .btn-info:hover {
+            background-color: #138496;
+        }
+        
+        .currency {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .positive {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .negative {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        
+        .neutral {
+            color: #6c757d;
+        }
+        
+        .status-overweight {
+            background-color: #ffe6e6;
+            color: #c82333;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        .status-underweight {
+            background-color: #e6ffe6;
+            color: #218838;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        .status-balanced {
+            background-color: #e6f2ff;
+            color: #2a5298;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        .summary-box {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2a5298;
+            margin-top: 20px;
+        }
+        
+        .summary-box h3 {
+            color: #2a5298;
+            margin-bottom: 15px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .example-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .example-buttons button {
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .action-buy {
+            background-color: #e6ffe6;
+            color: #218838;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .action-sell {
+            background-color: #ffe6e6;
+            color: #c82333;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .action-topup {
+            background-color: #e6f2ff;
+            color: #2a5298;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .tab-container {
+            margin-top: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            width: auto;
+        }
+        
+        .tab.active {
+            color: #2a5298;
+            border-bottom: 3px solid #2a5298;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .notification {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .notification.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .notification.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .notification.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            display: block;
+        }
+        
+        .notification.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+        
+        .portfolio-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2a5298;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .asset-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: end;
+        }
+        
+        @media (max-width: 768px) {
+            .asset-form {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .remove-asset {
+            background-color: transparent;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            padding: 0;
+        }
+        
+        .remove-asset:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .storage-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .storage-controls button {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .last-saved {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #6c757d;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Rebalancing Calculator</h1>
+            <p class="subtitle">Kelola portofolio investasi Anda secara otomatis</p>
+            <p class="subtitle" style="font-size: 0.9rem; margin-top: 10px;">Data tersimpan otomatis di browser Anda</p>
+        </header>
+        
+        <div id="notification" class="notification"></div>
+        
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="panel">
+                    <h2>Konfigurasi Portofolio</h2>
+                    
+                    <div class="input-group">
+                        <label for="totalValue">Total Nilai Portofolio (Rp)</label>
+                        <input type="number" id="totalValue" min="0" step="100000" value="100000000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Metode Rebalancing</label>
+                        <select id="rebalanceMethod">
+                            <option value="sellBuy">Jual/Beli Aset</option>
+                            <option value="topup">Tambahkan Dana Baru (Top-up)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="topupSection" class="input-group" style="display: none;">
+                        <label for="topupAmount">Jumlah Dana Top-up (Rp)</label>
+                        <input type="number" id="topupAmount" min="0" step="100000" value="0">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="calculateBtn" class="btn-success">Hitung Rebalancing</button>
+                        <button id="resetBtn" class="btn-secondary">Reset Portofolio</button>
+                    </div>
+                    
+                    <div class="storage-controls">
+                        <button id="saveBtn" class="btn-info">Simpan ke Local Storage</button>
+                        <button id="loadBtn" class="btn-info">Muat dari Local Storage</button>
+                        <button id="clearStorageBtn" class="btn-danger">Hapus Semua Data</button>
+                    </div>
+                    
+                    <div id="lastSavedInfo" class="last-saved">
+                        <!-- Informasi terakhir disimpan akan ditampilkan di sini -->
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <h2>Tambahkan Aset Baru</h2>
+                    
+                    <div class="asset-form">
+                        <div class="input-group">
+                            <label for="newAssetName">Nama Aset</label>
+                            <input type="text" id="newAssetName" placeholder="Contoh: Saham A">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="newAssetValue">Nilai Saat Ini (Rp)</label>
+                            <input type="number" id="newAssetValue" min="0" step="100000" value="0">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="newAssetTarget">Target Alokasi (%)</label>
+                            <input type="number" id="newAssetTarget" min="0" max="100" step="0.1" value="0">
+                        </div>
+                        
+                        <button id="addAssetBtn" class="btn-success">+ Tambah</button>
+                    </div>
+                    
+                    <div class="summary-box">
+                        <h3>Ringkasan Alokasi</h3>
+                        <div class="summary-item">
+                            <span>Total Target Alokasi:</span>
+                            <span id="totalAllocation">0%</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Status:</span>
+                            <span id="allocationStatus">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Jumlah Aset:</span>
+                            <span id="assetCount">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <h2>Contoh Kasus</h2>
+                    <p>Pilih contoh untuk memuat data secara otomatis:</p>
+                    
+                    <div class="example-buttons">
+                        <button id="example1" class="btn-warning">Kasus 1: Jual/Beli</button>
+                        <button id="example2" class="btn-warning">Kasus 2: Top-up</button>
+                        <button id="example3" class="btn-warning">Kasus 3: Tambah Aset</button>
+                        <button id="example4" class="btn-warning">Kasus 4: Hapus Aset</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="panel">
+                    <div class="tabs">
+                        <button class="tab active" data-tab="portfolio">Portofolio Saat Ini</button>
+                        <button class="tab" data-tab="result">Hasil Rebalancing</button>
+                        <button class="tab" data-tab="storage">Data Tersimpan</button>
+                    </div>
+                    
+                    <div id="portfolioTab" class="tab-content active">
+                        <div class="portfolio-value">
+                            Total: <span id="currentPortfolioValue" class="currency">Rp100,000,000</span>
+                        </div>
+                        
+                        <table id="assetsTable">
+                            <thead>
+                                <tr>
+                                    <th>Aset</th>
+                                    <th>Nilai Saat Ini</th>
+                                    <th>Alokasi Saat Ini</th>
+                                    <th>Target Alokasi</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assetsBody">
+                                <!-- Aset akan dimasukkan di sini secara dinamis -->
+                            </tbody>
+                        </table>
+                        
+                        <div class="button-group">
+                            <button id="adjustAllocationBtn" class="btn-secondary">Sesuaikan Semua Target ke 100%</button>
+                            <button id="clearAssetsBtn" class="btn-danger">Hapus Semua Aset</button>
+                        </div>
+                    </div>
+                    
+                    <div id="resultTab" class="tab-content">
+                        <div class="portfolio-value">
+                            Total Setelah Rebalancing: <span id="newPortfolioValue" class="currency">Rp0</span>
+                        </div>
+                        
+                        <table id="resultsTable">
+                            <thead>
+                                <tr>
+                                    <th>Aset</th>
+                                    <th>Nilai Saat Ini</th>
+                                    <th>Nilai Setelah</th>
+                                    <th>Target Alokasi</th>
+                                    <th>Alokasi Setelah</th>
+                                    <th>Rekomendasi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsBody">
+                                <!-- Hasil rebalancing akan dimasukkan di sini -->
+                            </tbody>
+                        </table>
+                        
+                        <div class="summary-box">
+                            <h3>Ringkasan Rebalancing</h3>
+                            <div id="rebalancingSummary">
+                                <!-- Ringkasan rebalancing akan dimasukkan di sini -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="storageTab" class="tab-content">
+                        <div class="summary-box">
+                            <h3>Status Penyimpanan Local Storage</h3>
+                            <div class="summary-item">
+                                <span>Data Tersimpan:</span>
+                                <span id="storageStatus">Memeriksa...</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Ukuran Data:</span>
+                                <span id="storageSize">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Tanggal Simpan Terakhir:</span>
+                                <span id="storageLastSave">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Jumlah Aset Tersimpan:</span>
+                                <span id="storageAssetCount">-</span>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Cadangkan atau Pulihkan Data</label>
+                            <div class="storage-controls">
+                                <button id="exportBtn" class="btn-info">Ekspor Data ke File</button>
+                                <button id="importBtn" class="btn-info">Impor Data dari File</button>
+                            </div>
+                            <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">
+                                Gunakan fitur ekspor untuk mencadangkan data portofolio Anda ke file JSON.
+                            </p>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="storageKey">Kunci Penyimpanan (Opsional)</label>
+                            <input type="text" id="storageKey" placeholder="portfolio_data">
+                            <p style="margin-top: 5px; font-size: 0.85rem; color: #666;">
+                                Kunci default: "rebalancing_portfolio". Ubah jika ingin menyimpan beberapa portofolio.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Rebalancing Calculator &copy; 2023 | Kalkulator untuk mengelola portofolio investasi secara optimal</p>
+            <p>Catatan: Kalkulator ini hanya untuk tujuan edukasi. Konsultasikan dengan profesional keuangan sebelum mengambil keputusan investasi.</p>
+            <p style="margin-top: 10px; font-size: 0.8rem;">Data Anda disimpan secara lokal di browser Anda dan tidak dikirim ke server manapun.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Konstanta untuk kunci local storage
+        const STORAGE_KEY = 'rebalancing_portfolio';
+        const LAST_SAVED_KEY = 'rebalancing_last_saved';
+        
+        // Data portofolio
+        let portfolio = {
+            totalValue: 100000000,
+            assets: [],
+            settings: {
+                rebalanceMethod: 'sellBuy',
+                topupAmount: 0
+            }
+        };
+        
+        // Inisialisasi aplikasi
+        document.addEventListener('DOMContentLoaded', function() {
+            // Coba muat data dari local storage
+            loadFromLocalStorage();
+            
+            // Update informasi penyimpanan
+            updateStorageInfo();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Update tampilan portofolio
+            updatePortfolioDisplay();
+        });
+        
+        // Setup semua event listeners
+        function setupEventListeners() {
+            // Tombol tambah aset
+            document.getElementById('addAssetBtn').addEventListener('click', addAsset);
+            
+            // Tombol hitung rebalancing
+            document.getElementById('calculateBtn').addEventListener('click', calculateRebalancing);
+            
+            // Tombol reset portofolio
+            document.getElementById('resetBtn').addEventListener('click', resetPortfolio);
+            
+            // Tombol hapus semua aset
+            document.getElementById('clearAssetsBtn').addEventListener('click', clearAllAssets);
+            
+            // Tombol sesuaikan alokasi
+            document.getElementById('adjustAllocationBtn').addEventListener('click', adjustAllocationTo100);
+            
+            // Ubah metode rebalancing
+            document.getElementById('rebalanceMethod').addEventListener('change', function() {
+                const topupSection = document.getElementById('topupSection');
+                topupSection.style.display = this.value === 'topup' ? 'block' : 'none';
+                portfolio.settings.rebalanceMethod = this.value;
+                saveToLocalStorage();
+            });
+            
+            // Input jumlah top-up
+            document.getElementById('topupAmount').addEventListener('change', function() {
+                portfolio.settings.topupAmount = parseFloat(this.value) || 0;
+                saveToLocalStorage();
+            });
+            
+            // Input total nilai portofolio
+            document.getElementById('totalValue').addEventListener('change', function() {
+                portfolio.totalValue = parseFloat(this.value) || 0;
+                saveToLocalStorage();
+                updatePortfolioDisplay();
+            });
+            
+            // Tombol untuk local storage
+            document.getElementById('saveBtn').addEventListener('click', function() {
+                saveToLocalStorage();
+                showNotification('Data berhasil disimpan ke Local Storage', 'success');
+                updateStorageInfo();
+            });
+            
+            document.getElementById('loadBtn').addEventListener('click', function() {
+                loadFromLocalStorage();
+                showNotification('Data berhasil dimuat dari Local Storage', 'success');
+                updateStorageInfo();
+            });
+            
+            document.getElementById('clearStorageBtn').addEventListener('click', clearLocalStorage);
+            
+            // Tombol untuk ekspor/impor
+            document.getElementById('exportBtn').addEventListener('click', exportData);
+            document.getElementById('importBtn').addEventListener('click', importData);
+            
+            // Contoh kasus
+            document.getElementById('example1').addEventListener('click', () => loadExample1());
+            document.getElementById('example2').addEventListener('click', () => loadExample2());
+            document.getElementById('example3').addEventListener('click', () => loadExample3());
+            document.getElementById('example4').addEventListener('click', () => loadExample4());
+            
+            // Tab navigation
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    switchTab(tabId);
+                    
+                    // Update info penyimpanan jika tab storage dibuka
+                    if (tabId === 'storage') {
+                        updateStorageInfo();
+                    }
+                });
+            });
+            
+            // Auto-save ketika input berubah
+            setupAutoSave();
+        }
+        
+        // Setup auto-save untuk input aset
+        function setupAutoSave() {
+            // Event listener akan ditambahkan secara dinamis ketika tabel aset diupdate
+            // Lihat fungsi updatePortfolioDisplay()
+        }
+        
+        // Simpan data ke Local Storage
+        function saveToLocalStorage() {
+            try {
+                // Dapatkan kunci penyimpanan
+                const storageKey = document.getElementById('storageKey').value || STORAGE_KEY;
+                
+                // Siapkan data untuk disimpan
+                const saveData = {
+                    portfolio: portfolio,
+                    timestamp: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                // Simpan ke local storage
+                localStorage.setItem(storageKey, JSON.stringify(saveData));
+                
+                // Simpan timestamp terakhir
+                const now = new Date();
+                localStorage.setItem(LAST_SAVED_KEY, now.toLocaleString());
+                
+                // Update info terakhir disimpan
+                document.getElementById('lastSavedInfo').textContent = `Terakhir disimpan: ${now.toLocaleString()}`;
+                
+                return true;
+            } catch (error) {
+                console.error('Gagal menyimpan ke local storage:', error);
+                showNotification('Gagal menyimpan ke Local Storage: ' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        // Muat data dari Local Storage
+        function loadFromLocalStorage() {
+            try {
+                // Dapatkan kunci penyimpanan
+                const storageKey = document.getElementById('storageKey').value || STORAGE_KEY;
+                
+                // Ambil data dari local storage
+                const savedData = localStorage.getItem(storageKey);
+                
+                if (!savedData) {
+                    showNotification('Tidak ada data tersimpan di Local Storage', 'info');
+                    return false;
+                }
+                
+                // Parse data JSON
+                const data = JSON.parse(savedData);
+                
+                // Validasi data
+                if (!data.portfolio || !data.portfolio.assets) {
+                    showNotification('Format data tidak valid', 'error');
+                    return false;
+                }
+                
+                // Muat data portofolio
+                portfolio = data.portfolio;
+                
+                // Update UI dengan data yang dimuat
+                document.getElementById('totalValue').value = portfolio.totalValue || 0;
+                document.getElementById('rebalanceMethod').value = portfolio.settings?.rebalanceMethod || 'sellBuy';
+                document.getElementById('topupAmount').value = portfolio.settings?.topupAmount || 0;
+                
+                // Tampilkan/ sembunyikan section top-up berdasarkan metode
+                document.getElementById('topupSection').style.display = 
+                    (portfolio.settings?.rebalanceMethod === 'topup') ? 'block' : 'none';
+                
+                // Update timestamp terakhir disimpan
+                const lastSaved = localStorage.getItem(LAST_SAVED_KEY);
+                if (lastSaved) {
+                    document.getElementById('lastSavedInfo').textContent = `Terakhir disimpan: ${lastSaved}`;
+                }
+                
+                // Update tampilan portofolio
+                updatePortfolioDisplay();
+                
+                return true;
+            } catch (error) {
+                console.error('Gagal memuat dari local storage:', error);
+                showNotification('Gagal memuat dari Local Storage: ' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        // Hapus data dari Local Storage
+        function clearLocalStorage() {
+            if (confirm('Apakah Anda yakin ingin menghapus semua data dari Local Storage? Tindakan ini tidak dapat dibatalkan.')) {
+                try {
+                    // Dapatkan kunci penyimpanan
+                    const storageKey = document.getElementById('storageKey').value || STORAGE_KEY;
+                    
+                    // Hapus data
+                    localStorage.removeItem(storageKey);
+                    localStorage.removeItem(LAST_SAVED_KEY);
+                    
+                    // Reset portfolio
+                    portfolio = {
+                        totalValue: 100000000,
+                        assets: [],
+                        settings: {
+                            rebalanceMethod: 'sellBuy',
+                            topupAmount: 0
+                        }
+                    };
+                    
+                    // Update UI
+                    document.getElementById('totalValue').value = portfolio.totalValue;
+                    document.getElementById('rebalanceMethod').value = portfolio.settings.rebalanceMethod;
+                    document.getElementById('topupAmount').value = portfolio.settings.topupAmount;
+                    document.getElementById('topupSection').style.display = 'none';
+                    document.getElementById('lastSavedInfo').textContent = '';
+                    
+                    updatePortfolioDisplay();
+                    updateStorageInfo();
+                    
+                    showNotification('Semua data telah dihapus dari Local Storage', 'success');
+                } catch (error) {
+                    console.error('Gagal menghapus local storage:', error);
+                    showNotification('Gagal menghapus data dari Local Storage', 'error');
+                }
+            }
+        }
+        
+        // Update informasi penyimpanan
+        function updateStorageInfo() {
+            try {
+                // Dapatkan kunci penyimpanan
+                const storageKey = document.getElementById('storageKey').value || STORAGE_KEY;
+                
+                // Ambil data dari local storage
+                const savedData = localStorage.getItem(storageKey);
+                
+                if (savedData) {
+                    document.getElementById('storageStatus').textContent = 'Data tersimpan';
+                    document.getElementById('storageStatus').className = 'positive';
+                    
+                    // Hitung ukuran data
+                    const size = (savedData.length * 2) / 1024; // Ukuran dalam KB
+                    document.getElementById('storageSize').textContent = size.toFixed(2) + ' KB';
+                    
+                    // Parse data untuk mendapatkan informasi
+                    const data = JSON.parse(savedData);
+                    document.getElementById('storageLastSave').textContent = 
+                        new Date(data.timestamp).toLocaleString() || '-';
+                    document.getElementById('storageAssetCount').textContent = 
+                        data.portfolio?.assets?.length || 0;
+                } else {
+                    document.getElementById('storageStatus').textContent = 'Tidak ada data';
+                    document.getElementById('storageStatus').className = 'neutral';
+                    document.getElementById('storageSize').textContent = '-';
+                    document.getElementById('storageLastSave').textContent = '-';
+                    document.getElementById('storageAssetCount').textContent = '0';
+                }
+            } catch (error) {
+                console.error('Gagal memperbarui info penyimpanan:', error);
+                document.getElementById('storageStatus').textContent = 'Error';
+                document.getElementById('storageStatus').className = 'negative';
+            }
+        }
+        
+        // Ekspor data ke file JSON
+        function exportData() {
+            try {
+                // Dapatkan kunci penyimpanan
+                const storageKey = document.getElementById('storageKey').value || STORAGE_KEY;
+                
+                // Ambil data dari local storage
+                const savedData = localStorage.getItem(storageKey);
+                
+                if (!savedData) {
+                    showNotification('Tidak ada data untuk diekspor', 'warning');
+                    return;
+                }
+                
+                // Parse data untuk validasi
+                const data = JSON.parse(savedData);
+                
+                // Tambahkan metadata ekspor
+                data.exportTimestamp = new Date().toISOString();
+                data.exportNote = 'Data portofolio dari Rebalancing Calculator';
+                
+                // Konversi ke string JSON dengan format yang rapi
+                const jsonData = JSON.stringify(data, null, 2);
+                
+                // Buat blob dan download
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `rebalancing_portfolio_${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification('Data berhasil diekspor ke file JSON', 'success');
+            } catch (error) {
+                console.error('Gagal mengekspor data:', error);
+                showNotification('Gagal mengekspor data: ' + error.message, 'error');
+            }
+        }
+        
+        // Impor data dari file JSON
+        function importData() {
+            try {
+                // Buat input file
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json,application/json';
+                
+                input.onchange = function(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const importedData = JSON.parse(e.target.result);
+                            
+                            // Validasi data
+                            if (!importedData.portfolio || !importedData.portfolio.assets) {
+                                showNotification('Format file tidak valid', 'error');
+                                return;
+                            }
+                            
+                            // Dapatkan kunci penyimpanan
+                            const storageKey = document.getElementById('storageKey').value || STORAGE_KEY;
+                            
+                            // Simpan ke local storage
+                            importedData.timestamp = new Date().toISOString();
+                            localStorage.setItem(storageKey, JSON.stringify(importedData));
+                            localStorage.setItem(LAST_SAVED_KEY, new Date().toLocaleString());
+                            
+                            // Muat data yang diimpor
+                            loadFromLocalStorage();
+                            showNotification('Data berhasil diimpor dari file', 'success');
+                            updateStorageInfo();
+                        } catch (error) {
+                            console.error('Gagal mengimpor data:', error);
+                            showNotification('Gagal mengimpor data: File tidak valid', 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            } catch (error) {
+                console.error('Gagal mengimpor data:', error);
+                showNotification('Gagal mengimpor data: ' + error.message, 'error');
+            }
+        }
+        
+        // Tambah aset baru
+        function addAsset() {
+            const nameInput = document.getElementById('newAssetName');
+            const valueInput = document.getElementById('newAssetValue');
+            const targetInput = document.getElementById('newAssetTarget');
+            
+            const name = nameInput.value.trim();
+            const value = parseFloat(valueInput.value) || 0;
+            const target = parseFloat(targetInput.value) || 0;
+            
+            // Validasi input
+            if (!name) {
+                showNotification('Nama aset harus diisi', 'error');
+                return;
+            }
+            
+            if (value < 0) {
+                showNotification('Nilai aset tidak boleh negatif', 'error');
+                return;
+            }
+            
+            if (target < 0 || target > 100) {
+                showNotification('Target alokasi harus antara 0% dan 100%', 'error');
+                return;
+            }
+            
+            // Cek apakah aset sudah ada
+            const existingAsset = portfolio.assets.find(asset => asset.name === name);
+            if (existingAsset) {
+                showNotification(`Aset "${name}" sudah ada dalam portofolio`, 'error');
+                return;
+            }
+            
+            // Hitung total target alokasi setelah penambahan
+            const totalTarget = portfolio.assets.reduce((sum, asset) => sum + asset.target, 0) + target;
+            
+            if (totalTarget > 100) {
+                showNotification(`Total target alokasi akan menjadi ${totalTarget.toFixed(2)}% (melebihi 100%)`, 'error');
+                return;
+            }
+            
+            // Tambahkan aset baru
+            portfolio.assets.push({
+                id: Date.now(), // ID unik
+                name: name,
+                value: value,
+                target: target
+            });
+            
+            // Reset form input
+            nameInput.value = '';
+            valueInput.value = '0';
+            targetInput.value = '0';
+            
+            // Simpan ke local storage
+            saveToLocalStorage();
+            
+            // Update tampilan
+            updatePortfolioDisplay();
+            showNotification(`Aset "${name}" berhasil ditambahkan`, 'success');
+        }
+        
+        // Hapus aset
+        function removeAsset(assetId) {
+            portfolio.assets = portfolio.assets.filter(asset => asset.id !== assetId);
+            
+            // Simpan ke local storage
+            saveToLocalStorage();
+            
+            updatePortfolioDisplay();
+            showNotification('Aset berhasil dihapus', 'success');
+        }
+        
+        // Hapus semua aset
+        function clearAllAssets() {
+            if (portfolio.assets.length === 0) {
+                showNotification('Portofolio sudah kosong', 'warning');
+                return;
+            }
+            
+            if (confirm('Apakah Anda yakin ingin menghapus semua aset dari portofolio?')) {
+                portfolio.assets = [];
+                
+                // Simpan ke local storage
+                saveToLocalStorage();
+                
+                updatePortfolioDisplay();
+                showNotification('Semua aset telah dihapus', 'success');
+            }
+        }
+        
+        // Update target alokasi aset
+        function updateAssetTarget(assetId, newTarget) {
+            const asset = portfolio.assets.find(a => a.id === assetId);
+            if (asset) {
+                asset.target = parseFloat(newTarget) || 0;
+                
+                // Simpan ke local storage
+                saveToLocalStorage();
+                
+                updatePortfolioDisplay();
+            }
+        }
+        
+        // Update nilai aset
+        function updateAssetValue(assetId, newValue) {
+            const asset = portfolio.assets.find(a => a.id === assetId);
+            if (asset) {
+                asset.value = parseFloat(newValue) || 0;
+                
+                // Simpan ke local storage
+                saveToLocalStorage();
+                
+                updatePortfolioDisplay();
+            }
+        }
+        
+        // Sesuaikan semua target alokasi menjadi 100%
+        function adjustAllocationTo100() {
+            if (portfolio.assets.length === 0) {
+                showNotification('Tidak ada aset dalam portofolio', 'warning');
+                return;
+            }
+            
+            // Hitung total target saat ini
+            const currentTotal = portfolio.assets.reduce((sum, asset) => sum + asset.target, 0);
+            
+            if (currentTotal === 0) {
+                // Jika semua target 0%, bagi rata
+                const equalAllocation = 100 / portfolio.assets.length;
+                portfolio.assets.forEach(asset => {
+                    asset.target = equalAllocation;
+                });
+            } else {
+                // Sesuaikan secara proporsional
+                const factor = 100 / currentTotal;
+                portfolio.assets.forEach(asset => {
+                    asset.target = asset.target * factor;
+                });
+            }
+            
+            // Simpan ke local storage
+            saveToLocalStorage();
+            
+            updatePortfolioDisplay();
+            showNotification('Target alokasi disesuaikan menjadi total 100%', 'success');
+        }
+        
+        // Hitung rebalancing
+        function calculateRebalancing() {
+            if (portfolio.assets.length === 0) {
+                showNotification('Tambahkan aset terlebih dahulu', 'error');
+                return;
+            }
+            
+            // Validasi total target alokasi
+            const totalTarget = portfolio.assets.reduce((sum, asset) => sum + asset.target, 0);
+            
+            if (Math.abs(totalTarget - 100) > 0.01) {
+                showNotification(`Total target alokasi harus tepat 100%. Saat ini: ${totalTarget.toFixed(2)}%`, 'error');
+                return;
+            }
+            
+            // Hitung total nilai portofolio
+            portfolio.totalValue = portfolio.assets.reduce((sum, asset) => sum + asset.value, 0);
+            document.getElementById('totalValue').value = portfolio.totalValue;
+            
+            const method = document.getElementById('rebalanceMethod').value;
+            const topupAmount = method === 'topup' ? parseFloat(document.getElementById('topupAmount').value) || 0 : 0;
+            
+            // Simpan pengaturan terakhir
+            portfolio.settings.rebalanceMethod = method;
+            portfolio.settings.topupAmount = topupAmount;
+            saveToLocalStorage();
+            
+            // Hitung rebalancing berdasarkan metode
+            const results = method === 'sellBuy' 
+                ? calculateSellBuyRebalancing() 
+                : calculateTopupRebalancing(topupAmount);
+            
+            // Tampilkan hasil
+            displayRebalancingResults(results, method, topupAmount);
+            
+            // Pindah ke tab hasil
+            switchTab('result');
+        }
+        
+        // Hitung rebalancing dengan metode jual/beli
+        function calculateSellBuyRebalancing() {
+            const results = [];
+            
+            portfolio.assets.forEach(asset => {
+                const currentValue = asset.value;
+                const targetValue = (asset.target / 100) * portfolio.totalValue;
+                const difference = targetValue - currentValue;
+                const action = difference > 0 ? 'BELI' : difference < 0 ? 'JUAL' : 'PERTAHANKAN';
+                
+                results.push({
+                    ...asset,
+                    currentValue: currentValue,
+                    targetValue: targetValue,
+                    difference: Math.abs(difference),
+                    action: action,
+                    newValue: targetValue,
+                    newAllocation: asset.target
+                });
+            });
+            
+            return results;
+        }
+        
+        // Hitung rebalancing dengan metode top-up
+        function calculateTopupRebalancing(topupAmount) {
+            const results = [];
+            const newTotalValue = portfolio.totalValue + topupAmount;
+            
+            portfolio.assets.forEach(asset => {
+                const currentValue = asset.value;
+                const targetValue = (asset.target / 100) * newTotalValue;
+                const difference = targetValue - currentValue;
+                const action = difference > 0 ? 'ALOKASIKAN' : 'PERTAHANKAN';
+                
+                results.push({
+                    ...asset,
+                    currentValue: currentValue,
+                    targetValue: targetValue,
+                    difference: Math.abs(difference),
+                    action: action,
+                    newValue: targetValue,
+                    newAllocation: asset.target
+                });
+            });
+            
+            return results;
+        }
+        
+        // Tampilkan hasil rebalancing
+        function displayRebalancingResults(results, method, topupAmount) {
+            const resultsBody = document.getElementById('resultsBody');
+            const newPortfolioValue = document.getElementById('newPortfolioValue');
+            const rebalancingSummary = document.getElementById('rebalancingSummary');
+            
+            // Kosongkan tabel hasil
+            resultsBody.innerHTML = '';
+            
+            // Hitung total nilai baru
+            const totalNewValue = results.reduce((sum, result) => sum + result.newValue, 0);
+            
+            // Format mata uang
+            newPortfolioValue.textContent = formatCurrency(totalNewValue);
+            
+            // Isi tabel hasil
+            results.forEach(result => {
+                const row = document.createElement('tr');
+                
+                // Tentukan kelas untuk aksi
+                let actionClass = 'neutral';
+                let actionText = '';
+                
+                if (result.action === 'BELI') {
+                    actionClass = 'positive';
+                    actionText = `<span class="action-buy">BELI ${formatCurrency(result.difference)}</span>`;
+                } else if (result.action === 'JUAL') {
+                    actionClass = 'negative';
+                    actionText = `<span class="action-sell">JUAL ${formatCurrency(result.difference)}</span>`;
+                } else if (result.action === 'ALOKASIKAN') {
+                    actionClass = 'positive';
+                    actionText = `<span class="action-topup">ALOKASIKAN ${formatCurrency(result.difference)}</span>`;
+                } else {
+                    actionText = '<span class="neutral">PERTAHANKAN</span>';
+                }
+                
+                // Hitung alokasi saat ini
+                const currentAllocation = (result.currentValue / portfolio.totalValue) * 100;
+                
+                row.innerHTML = `
+                    <td><strong>${result.name}</strong></td>
+                    <td class="currency">${formatCurrency(result.currentValue)}</td>
+                    <td class="currency">${formatCurrency(result.newValue)}</td>
+                    <td>${result.target.toFixed(2)}%</td>
+                    <td>${result.newAllocation.toFixed(2)}%</td>
+                    <td class="${actionClass}">${actionText}</td>
+                `;
+                
+                resultsBody.appendChild(row);
+            });
+            
+            // Buat ringkasan rebalancing
+            let summaryHTML = '';
+            
+            if (method === 'sellBuy') {
+                const buyAssets = results.filter(r => r.action === 'BELI');
+                const sellAssets = results.filter(r => r.action === 'JUAL');
+                
+                if (buyAssets.length === 0 && sellAssets.length === 0) {
+                    summaryHTML = '<p>Portofolio sudah seimbang dengan target alokasi. Tidak perlu tindakan.</p>';
+                } else {
+                    summaryHTML = '<p><strong>Rekomendasi Tindakan:</strong></p>';
+                    
+                    if (sellAssets.length > 0) {
+                        summaryHTML += '<p>📉 <strong>JUAL aset berikut:</strong></p><ul>';
+                        sellAssets.forEach(asset => {
+                            summaryHTML += `<li>${asset.name}: ${formatCurrency(asset.difference)}</li>`;
+                        });
+                        summaryHTML += '</ul>';
+                    }
+                    
+                    if (buyAssets.length > 0) {
+                        summaryHTML += '<p>📈 <strong>BELI aset berikut:</strong></p><ul>';
+                        buyAssets.forEach(asset => {
+                            summaryHTML += `<li>${asset.name}: ${formatCurrency(asset.difference)}</li>`;
+                        });
+                        summaryHTML += '</ul>';
+                    }
+                }
+            } else {
+                const allocateAssets = results.filter(r => r.action === 'ALOKASIKAN');
+                
+                if (allocateAssets.length === 0 && topupAmount === 0) {
+                    summaryHTML = '<p>Portofolio sudah seimbang dengan target alokasi. Tidak perlu top-up.</p>';
+                } else if (topupAmount === 0) {
+                    summaryHTML = '<p>Untuk menyeimbangkan portofolio tanpa top-up, gunakan metode Jual/Beli.</p>';
+                } else {
+                    summaryHTML = `
+                        <p><strong>Rekomendasi Alokasi Dana Top-up (${formatCurrency(topupAmount)}):</strong></p>
+                        <ul>
+                    `;
+                    
+                    allocateAssets.forEach(asset => {
+                        summaryHTML += `<li>${asset.name}: ${formatCurrency(asset.difference)}</li>`;
+                    });
+                    
+                    summaryHTML += '</ul>';
+                }
+            }
+            
+            rebalancingSummary.innerHTML = summaryHTML;
+        }
+        
+        // Update tampilan portofolio
+        function updatePortfolioDisplay() {
+            const assetsBody = document.getElementById('assetsBody');
+            const currentPortfolioValue = document.getElementById('currentPortfolioValue');
+            const totalAllocation = document.getElementById('totalAllocation');
+            const allocationStatus = document.getElementById('allocationStatus');
+            const assetCount = document.getElementById('assetCount');
+            
+            // Kosongkan tabel
+            assetsBody.innerHTML = '';
+            
+            // Hitung total nilai dan target alokasi
+            portfolio.totalValue = portfolio.assets.reduce((sum, asset) => sum + asset.value, 0);
+            const totalTargetAllocation = portfolio.assets.reduce((sum, asset) => sum + asset.target, 0);
+            
+            // Update nilai portofolio
+            document.getElementById('totalValue').value = portfolio.totalValue;
+            currentPortfolioValue.textContent = formatCurrency(portfolio.totalValue);
+            
+            // Update ringkasan alokasi
+            totalAllocation.textContent = totalTargetAllocation.toFixed(2) + '%';
+            assetCount.textContent = portfolio.assets.length;
+            
+            // Tentukan status alokasi
+            if (portfolio.assets.length === 0) {
+                allocationStatus.textContent = 'Tidak ada aset';
+                allocationStatus.className = 'neutral';
+            } else if (Math.abs(totalTargetAllocation - 100) < 0.01) {
+                allocationStatus.textContent = 'Tepat 100% (Siap rebalance)';
+                allocationStatus.className = 'positive';
+            } else if (totalTargetAllocation < 100) {
+                allocationStatus.textContent = `Kurang ${(100 - totalTargetAllocation).toFixed(2)}%`;
+                allocationStatus.className = 'negative';
+            } else {
+                allocationStatus.textContent = `Lebih ${(totalTargetAllocation - 100).toFixed(2)}%`;
+                allocationStatus.className = 'negative';
+            }
+            
+            // Isi tabel aset
+            portfolio.assets.forEach(asset => {
+                const row = document.createElement('tr');
+                
+                // Hitung alokasi saat ini
+                const currentAllocation = portfolio.totalValue > 0 
+                    ? (asset.value / portfolio.totalValue) * 100 
+                    : 0;
+                
+                // Tentukan status
+                let status = '';
+                if (currentAllocation > asset.target + 0.5) {
+                    status = '<span class="status-overweight">OVERWEIGHT</span>';
+                } else if (currentAllocation < asset.target - 0.5) {
+                    status = '<span class="status-underweight">UNDERWEIGHT</span>';
+                } else {
+                    status = '<span class="status-balanced">SEIMBANG</span>';
+                }
+                
+                row.innerHTML = `
+                    <td><strong>${asset.name}</strong></td>
+                    <td>
+                        <input type="number" 
+                               class="currency" 
+                               value="${asset.value}" 
+                               min="0"
+                               onchange="updateAssetValue(${asset.id}, this.value)"
+                               style="width: 120px; padding: 5px;">
+                    </td>
+                    <td>${currentAllocation.toFixed(2)}%</td>
+                    <td>
+                        <input type="number" 
+                               value="${asset.target.toFixed(2)}" 
+                               min="0" 
+                               max="100" 
+                               step="0.1"
+                               onchange="updateAssetTarget(${asset.id}, this.value)"
+                               style="width: 80px; padding: 5px;">
+                        %
+                    </td>
+                    <td>${status}</td>
+                    <td>
+                        <button class="remove-asset" onclick="removeAsset(${asset.id})">×</button>
+                    </td>
+                `;
+                
+                assetsBody.appendChild(row);
+            });
+            
+            // Jika tidak ada aset, tampilkan pesan
+            if (portfolio.assets.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" style="text-align: center; padding: 30px; color: #666;">
+                        <p>Tidak ada aset dalam portofolio.</p>
+                        <p>Gunakan form di sebelah kiri untuk menambahkan aset.</p>
+                    </td>
+                `;
+                assetsBody.appendChild(row);
+            }
+        }
+        
+        // Reset portofolio
+        function resetPortfolio() {
+            if (confirm('Apakah Anda yakin ingin mereset portofolio? Semua aset akan dihapus.')) {
+                portfolio = {
+                    totalValue: 100000000,
+                    assets: [],
+                    settings: {
+                        rebalanceMethod: 'sellBuy',
+                        topupAmount: 0
+                    }
+                };
+                
+                document.getElementById('totalValue').value = portfolio.totalValue;
+                document.getElementById('rebalanceMethod').value = portfolio.settings.rebalanceMethod;
+                document.getElementById('topupAmount').value = portfolio.settings.topupAmount;
+                document.getElementById('topupSection').style.display = 'none';
+                
+                // Simpan ke local storage
+                saveToLocalStorage();
+                
+                updatePortfolioDisplay();
+                showNotification('Portofolio telah direset', 'success');
+            }
+        }
+        
+        // Beralih antara tab
+        function switchTab(tabId) {
+            // Nonaktifkan semua tab
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Aktifkan tab yang dipilih
+            document.getElementById(tabId + 'Tab').classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        }
+        
+        // Tampilkan notifikasi
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            
+            // Sembunyikan notifikasi setelah 5 detik
+            setTimeout(() => {
+                notification.className = 'notification';
+            }, 5000);
+        }
+        
+        // Format mata uang
+        function formatCurrency(amount) {
+            return 'Rp' + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+        
+        // Contoh kasus 1: Rebalance dengan Jual/Beli
+        function loadExample1() {
+            portfolio = {
+                totalValue: 100000000,
+                assets: [
+                    { id: 1, name: 'Saham A', value: 60000000, target: 50 },
+                    { id: 2, name: 'Obligasi B', value: 40000000, target: 50 }
+                ],
+                settings: {
+                    rebalanceMethod: 'sellBuy',
+                    topupAmount: 0
+                }
+            };
+            
+            document.getElementById('totalValue').value = portfolio.totalValue;
+            document.getElementById('rebalanceMethod').value = portfolio.settings.rebalanceMethod;
+            document.getElementById('topupAmount').value = portfolio.settings.topupAmount;
+            document.getElementById('topupSection').style.display = 'none';
+            
+            // Simpan ke local storage
+            saveToLocalStorage();
+            
+            updatePortfolioDisplay();
+            showNotification('Contoh Kasus 1 dimuat: Rebalance dengan Jual/Beli', 'success');
+        }
+        
+        // Contoh kasus 2: Rebalance dengan Top-up
+        function loadExample2() {
+            portfolio = {
+                totalValue: 100000000,
+                assets: [
+                    { id: 1, name: 'Saham A', value: 70000000, target: 50 },
+                    { id: 2, name: 'Obligasi B', value: 30000000, target: 50 }
+                ],
+                settings: {
+                    rebalanceMethod: 'topup',
+                    topupAmount: 40000000
+                }
+            };
+            
+            document.getElementById('totalValue').value = portfolio.totalValue;
+            document.getElementById('rebalanceMethod').value = portfolio.settings.rebalanceMethod;
+            document.getElementById('topupAmount').value = portfolio.settings.topupAmount;
+            document.getElementById('topupSection').style.display = 'block';
+            
+            // Simpan ke local storage
+            saveToLocalStorage();
+            
+            updatePortfolioDisplay();
+            showNotification('Contoh Kasus 2 dimuat: Rebalance dengan Top-up Rp40 juta', 'success');
+        }
+        
+        // Contoh kasus 3: Menambah Aset Baru
+        function loadExample3() {
+            portfolio = {
+                totalValue: 100000000,
+                assets: [
+                    { id: 1, name: 'Saham A', value: 60000000, target: 54 },
+                    { id: 2, name: 'Obligasi B', value: 40000000, target: 36 },
+                    { id: 3, name: 'Bitcoin', value: 0, target: 10 }
+                ],
+                settings: {
+                    rebalanceMethod: 'topup',
+                    topupAmount: 10000000
+                }
+            };
+            
+            document.getElementById('totalValue').value = portfolio.totalValue;
+            document.getElementById('rebalanceMethod').value = portfolio.settings.rebalanceMethod;
+            document.getElementById('topupAmount').value = portfolio.settings.topupAmount;
+            document.getElementById('topupSection').style.display = 'block';
+            
+            // Simpan ke local storage
+            saveToLocalStorage();
+            
+            updatePortfolioDisplay();
+            showNotification('Contoh Kasus 3 dimuat: Menambah aset baru Bitcoin dengan target 10%', 'success');
+        }
+        
+        // Contoh kasus 4: Menghapus Aset
+        function loadExample4() {
+            portfolio = {
+                totalValue: 100000000,
+                assets: [
+                    { id: 1, name: 'Obligasi B', value: 100000000, target: 100 }
+                ],
+                settings: {
+                    rebalanceMethod: 'sellBuy',
+                    topupAmount: 0
+                }
+            };
+            
+            document.getElementById('totalValue').value = portfolio.totalValue;
+            document.getElementById('rebalanceMethod').value = portfolio.settings.rebalanceMethod;
+            document.getElementById('topupAmount').value = portfolio.settings.topupAmount;
+            document.getElementById('topupSection').style.display = 'none';
+            
+            // Simpan ke local storage
+            saveToLocalStorage();
+            
+            updatePortfolioDisplay();
+            showNotification('Contoh Kasus 4 dimuat: Setelah menghapus Saham A, Obligasi B menjadi 100%', 'success');
+        }
+    </script>
+</body>
+</html>
